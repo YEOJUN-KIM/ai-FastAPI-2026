@@ -3,8 +3,19 @@
 # import *
 
 from fastapi import FastAPI
+from pydantic import BaseModel
+
 import fnc_test
+
 app = FastAPI()
+
+# 클래스 : 함수의 변형. 현재는 데이터 구조만
+# 데이터 제대로 입력 검증
+class StudentModel(BaseModel):
+    name : str
+    email : str
+    age : int
+    major : str | None = None
 
 @app.get('/')
 def read_root() :
@@ -22,3 +33,21 @@ def get_students() :
 @app.get('/stduents/{id}')
 def get_students(id : int) :
     return{'student_id' : id}
+
+@app.get('/search')
+def search_student(major: str | None = None) :
+    return{"major" : major}
+
+@app.post('/students/{id}')
+def create_students(student : StudentModel):
+    return{'message': '학생등록',
+           'data' : student
+           }
+
+@app.patch('/students/{id}')
+def update_student(id:int):
+    return { 'message' : f'{id}번 학생 수정'}
+
+@app.delete('/students/{id}')
+def delete_student(id:int):
+    return { 'message' : f'{id}번 학생 삭제'}
