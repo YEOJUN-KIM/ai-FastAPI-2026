@@ -1,5 +1,9 @@
 # FastAPI
 
+## FastAPI 소개
+
+### 주요 특징
+
 - 실행 속도가 빠르다
 - 테스트를 위한 UI를 자동으로 만들어 줌
 - Pydantic을 사용, 요청과 응답 데이터를 검증할 수 있다
@@ -23,14 +27,15 @@ pip install fastapi uvicorn
 - Path에서 C:\Users\User\AppData\Roaming\Python\Python314\Scripts를 추가
 - cmd, VS CODE 재시작
 
-### Fast API 시작
+### FastAPI 시작
 
 프로젝트 루트(`ai_DB_2026`)에서 터미널을 열고 실행한다.
 
-``` bash
+```bash
 cd FastAPI
 python -m uvicorn Main:app --reload --port 8000
 ```
+
 - 이미 `FastAPI` 폴더에 있다면 `cd FastAPI`는 생략
 - `Main:app` : `Main.py` 파일의 `app` 객체를 실행
 - `--reload` : 수정되면 곧바로 반영되어서 서버 재시작
@@ -55,7 +60,7 @@ python -m uvicorn Main:app --reload --port 8000
 
 참고: [FastAPI 공식 문서 — 첫 단계](https://fastapi.tiangolo.com/tutorial/first-steps/)
 
-### Swagger UI 화면 읽기
+#### Swagger UI 화면 읽기
 
 - `default` : 별도의 태그를 지정하지 않은 API가 표시되는 기본 그룹
 - `GET` : 데이터를 조회할 때 사용하는 HTTP 요청 메서드
@@ -135,3 +140,92 @@ FastAPI에서는 URL 주소와 HTTP 메서드를 함께 파악해야 함. 같은
 | `403 Forbidden` | 접근 권한 없음 |
 | `404 Not Found` | 요청한 데이터나 경로가 없음 |
 | `500 Internal Server Error` | 서버 내부 오류 |
+## FastAPI와 PostgreSQL 연동
+
+### 기본 폴더 구조
+
+- 수업 예시 폴더 구조
+
+```text
+fastapi_postgres(day06)/
+├── main.py        # FastAPI 웹 서버
+└── database.py    # PostgreSQL 연결
+```
+
+### DB 연동 파이썬 패키지 설치
+
+- PostgreSQL 연결을 위한 `psycopg` 설치
+
+```bash
+pip install "psycopg[binary]"
+```
+
+- 내 개발환경(파이썬 패키지) 공유
+
+```bash
+pip freeze > requirements.txt
+```
+
+- 개발환경 재설치
+
+```bash
+pip install -r requirements.txt
+```
+
+### 기존 PostgreSQL students 테이블 사용
+
+- 내용 생략
+
+### DB 연결 파일 (`database.py`)
+
+- PostgreSQL 데이터베이스 연결
+
+## FastAPI 실행 및 디버깅
+
+### 서버 실행 코드
+
+`main.py`에서 `import uvicorn`을 추가하고, 파일 맨 아래에 다음 코드를 작성한다.
+
+```python
+if __name__ == '__main__':
+    uvicorn.run(
+        'main:app',
+        host='127.0.0.1',
+        port=8000,
+        reload=True,
+        log_level='debug'
+    )
+```
+
+- `if __name__ == '__main__':` : 이 파일을 직접 실행했을 때만 서버 시작 코드를 실행
+- `main:app` : `main.py`에 정의한 FastAPI 객체 `app`
+- `reload=True` : 파일 변경 시 서버를 자동으로 다시 실행
+- `log_level='debug'` : 자세한 로그 출력 설정. 중단점 디버깅과는 별개
+
+### VS Code 디버깅 순서
+
+1. `main.py`를 열고 `F5`로 파이썬 디버그 실행
+2. 확인할 함수나 로직에 `F9`로 중단점(Break Point) 설정
+3. Swagger UI 등에서 해당 API를 요청하면 실행 흐름이 중단점에 도달했을 때 일시 정지
+4. `F10`(함수 내부로 들어가지 않고 다음 줄 실행) 또는 `F11`(함수 내부로 들어가며 실행)로 진행
+5. 변수 및 조사식(Watch) 창에서 데이터와 처리 결과 확인
+6. 오류 원인을 찾아 수정한 뒤 다시 디버깅해서 정상 동작 확인
+
+참고: 자동 재시작은 별도 프로세스를 사용하므로 중단점이 잡히지 않으면 디버깅 중에는 `reload=False`로 실행해 본다.
+
+이 내용은 FastAPI 서버 실행 및 오류 원인 추적에 관한 메모다. 앞서 학생 등록에서 발생한 `fetchone()` 오류를 조사할 때도 활용할 수 있지만, SQL 쿼리 자체를 고치는 코드는 아니다.
+
+## FastAPI 추가 학습 리스트
+
+### DB 연동
+
+- ORM(Object-Relational Mapping): 파이썬 객체와 DB 테이블을 연결해 SQL을 직접 작성하지 않고도 CRUD(생성·조회·수정·삭제)를 수행하는 기술
+- SQLAlchemy 패키지를 pip로 설치한 후 ORM 학습에 사용
+
+### API 서버 활용
+
+- 예외 처리와 응답 모델 구조 정리
+- API 서버 프로젝트 구조화: 역할에 따라 `.py` 파일 분리, 환경파일로 설정 관리
+- 인증(로그인)과 권한 관리
+- JWT(JSON Web Token)를 활용한 사용자 인증
+- OAuth 2.0 기반 소셜 로그인 연동: 구글, 네이버, 카카오 로그인

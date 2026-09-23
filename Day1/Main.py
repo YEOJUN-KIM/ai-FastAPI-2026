@@ -5,7 +5,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-import fnc_test
+import Day1.fnc_test as fnc_test
 
 app = FastAPI()
 
